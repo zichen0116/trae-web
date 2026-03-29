@@ -38,6 +38,13 @@ import MoneyRain from './components/MoneyRain.vue'
 import ClownStamp from './components/ClownStamp.vue'
 import { playAudio } from './utils/audio'
 
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '')
+
+function buildApiUrl(path) {
+  if (!API_BASE_URL) return path
+  return `${API_BASE_URL}${path}`
+}
+
 const form = ref({
   product_name: '',
   reason: '',
@@ -64,7 +71,7 @@ async function handleSummon() {
   showClownStamp.value = false
   playAudio('bell')
   try {
-    const res = await fetch('/api/analyze', {
+    const res = await fetch(buildApiUrl('/api/analyze'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -75,7 +82,13 @@ async function handleSummon() {
         image_base64: form.value.imageBase64,
       }),
     })
-    if (!res.ok) throw new Error(await res.text())
+    if (!res.ok) {
+      const errorText = await res.text()
+      if (res.status === 502) {
+        throw new Error('网关 502：后端服务不可用或反向代理配置错误')
+      }
+      throw new Error(errorText)
+    }
     result.value = await res.json()
   } catch (e) {
     alert('财神爷暂时不在线，请重试：' + e.message)

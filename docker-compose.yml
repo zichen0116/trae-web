@@ -10,12 +10,17 @@ services:
       - "8000:8000"
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_BASE_URL=${OPENAI_BASE_URL:-https://dashscope.aliyuncs.com/compatible-mode/v1}
+      - OPENAI_TEXT_MODEL=${OPENAI_TEXT_MODEL:-qwen3.5-flash}
+      - OPENAI_VISION_MODEL=${OPENAI_VISION_MODEL:-qwen-vl-max}
     restart: always
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        - VITE_API_BASE_URL=${VITE_API_BASE_URL:-}
     ports:
       - "80:80"
     depends_on:

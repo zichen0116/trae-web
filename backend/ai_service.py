@@ -1,12 +1,16 @@
 import json
+import os
 import re
 from openai import OpenAI
 from prompts import build_system_prompt, build_user_message
 
-API_KEY = "sk-be0e3af7df284df5abe735dce5ca6953"
-BASE_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1"
-VISION_MODEL = "qwen-vl-max"
-TEXT_MODEL = "qwen3.5-flash"
+API_KEY = os.getenv("OPENAI_API_KEY", "")
+BASE_URL = os.getenv("OPENAI_BASE_URL", "https://dashscope.aliyuncs.com/compatible-mode/v1")
+VISION_MODEL = os.getenv("OPENAI_VISION_MODEL", "qwen-vl-max")
+TEXT_MODEL = os.getenv("OPENAI_TEXT_MODEL", "qwen3.5-flash")
+
+if not API_KEY:
+    raise RuntimeError("缺少 OPENAI_API_KEY 环境变量，请在部署环境中配置后再启动")
 
 client = OpenAI(api_key=API_KEY, base_url=BASE_URL)
 
