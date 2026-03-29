@@ -20,7 +20,7 @@
         :price="Number(form.price)"
         @decision="handleDecision"
       />
-      <MoneyRain v-if="showMoneyRain" :price="Number(form.price)" />
+      <MoneyRain v-if="showMoneyRain" :price="Number(form.price)" @close="showMoneyRain = false" />
       <ClownStamp v-if="showClownStamp" />
     </main>
   </div>
